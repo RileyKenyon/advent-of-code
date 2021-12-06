@@ -13,25 +13,29 @@ def main():
         lines = f.read().split('\n\n')
         bingo_keys = lines.pop(0)
         bingo_keys = bingo_keys.split(',')
-        original_bingo_boards = constructBingoBoards(lines)
-        bingo_boards = copy.deepcopy(original_bingo_boards)
+        bingo_boards = constructBingoBoards(lines)
+        winner_ids = []
+        winner_keys = []
         for key in bingo_keys:
-            for id, board in enumerate(bingo_boards):
-                bingo_boards[id] = checkOffBingoBoard(board,key)
-                if id == 0:
-                    print(key)
-                    print(bingo_boards[59])
-            winner, id = checkForWinners(bingo_boards)
-            if winner:
-                break
+            for idx, board in enumerate(bingo_boards):
+                if idx not in winner_ids:
+                    bingo_boards[idx] = checkOffBingoBoard(board,key)
+                    winner = checkForWinner(bingo_boards[idx])
+                    if winner:
+                        winner_ids.append(idx)
+                        winner_keys.append(key)
 
-        if winner:
-            score = calculateWinningScore(bingo_boards[id], key)
-            print("Winning Board Id: {0}".format(id))
-            print("Key: {0}".format(key))
-            print("Score: {0}".format(score))
-            print(bingo_boards[id])
-            print(original_bingo_boards[id])
+        if winner_ids:
+            # First board to win
+            id_first = winner_ids[0]
+            key_first = winner_keys[0]
+            score_first = calculateWinningScore(bingo_boards[id_first], key_first)
+            
+            # last board to win
+            id_last = winner_ids[-1]
+            key_last = winner_keys[-1]
+            score_last = calculateWinningScore(bingo_boards[id_last], key_last)
+            
         else:
             print("No Winning board")
 
@@ -64,41 +68,33 @@ def checkOffBingoBoard(board, key):
         newboard.append(row)
     return newboard
 
-
-def checkForWinners(boards):
+def checkForWinner(board):
     # initialize default returns
     winner = False
-    id = None
     bingo_type = None
-    for id, board in enumerate(boards):
-        # Check rows
-        for row in board:
-            if row.count('x') == len(row):
-                winner = True
-                bingo_type = 'row'
-                break
-        
-        # Check columns
-        col_id = []
-        counter_arr = [0 for i in range(0,len(board))]
-        for row in board:
-            for val_id, val in enumerate(row):
-                if val == 'x':
-                    # log id, make sure other winners match
-                    if (val_id not in col_id):
-                        col_id.append(val_id)
-                    counter_arr[val_id] = counter_arr[val_id] + 1
 
-        if (counter_arr.count(len(board))):
+    # Check rows
+    for row in board:
+        if row.count('x') == len(row):
             winner = True
-            bingo_type = 'column'
+            bingo_type = 'row'
         
-        if winner:
-            break
-   
-    # Return results
-    # print(winner, bingo_type, id)
-    return winner, id
+    # Check columns
+    col_id = []
+    counter_arr = [0 for i in range(0,len(board))]
+    for row in board:
+        for val_id, val in enumerate(row):
+            if val == 'x':
+                # log id, make sure other winners match
+                if (val_id not in col_id):
+                    col_id.append(val_id)
+                counter_arr[val_id] = counter_arr[val_id] + 1
+
+    if (counter_arr.count(len(board))):
+        winner = True
+        bingo_type = 'column'
+
+    return winner
 
 def calculateWinningScore(board, key):
     # calculates the winning score
@@ -106,7 +102,13 @@ def calculateWinningScore(board, key):
     for row in board:
         for val in row:
             score = score + int(val) if val != 'x' else score
-    return score * int(key)
+    score = score * int(key)
+    
+    # print out results
+    print("Winning Board: {0}".format(board))
+    print("Key: {0}".format(key))
+    print("Score: {0}".format(score))
+    return score
 
 
 if __name__ == "__main__":
