@@ -70,6 +70,15 @@ def update_grid(start, end, width, height):
         # Horizontal lines
         elif y1 == y2:
             grid[min(x1,x2):max(x1,x2) + 1, y1] += 1
+
+        # Diagonal lines
+        else:
+            dy = 1 if y1 < y2 else -1
+            dx = 1 if x1 < x2 else -1
+            x_list = range(x1,x2+dx,dx)
+            y_list = range(y1,y2+dy,dy)
+            for x,y in zip(x_list,y_list):
+                grid[x,y]+=1
     return grid
     
 def get_overlap_sum(grid, min_overlap):
