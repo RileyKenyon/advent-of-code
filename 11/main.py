@@ -26,18 +26,10 @@ def recursive_update(coord):
         for i in [row-1,row,row+1]:
             for j in [col-1,col,col+1]:
                 if in_bounds(i,j,w,h):
-                    # print("Index:{0}".format([i,j]))
                     if energy_grid[i][j] != 0:
                         energy_grid[i][j]+=1
                         count = recursive_update([i,j])
                         counter+=count
-
-        # for i in range(row-1,1,row+1):
-        #     for j in range(col-1,1,col+1):
-        #         if in_bounds(i,j,w,h):
-        #             count = recursive_update([i,j])
-        #             counter+=count
-                    # if energy_grid[i][j] > 9:
     return counter
 
 def main():
@@ -54,6 +46,7 @@ def main():
         - Octopus can only flash once per step
         - Any octopus that did flash has its energy level set to 0 
     1.) Simulate 100 steps - how many total flashes are there after 100 steps
+    2.) 
     """
     global energy_grid
     counter = 0
@@ -64,8 +57,9 @@ def main():
         energy_grid = [list(line) for line in lines]
 
         # Loop through time
-        for t in range(0,100):
-            print(np.array(energy_grid))
+        ts = 0
+        while(True):
+            # print(np.array(energy_grid))
             # update grid by one
             for row in range(0,len(energy_grid)):
                 for col in range(0,len(energy_grid[0])):
@@ -76,7 +70,11 @@ def main():
                     # Recursively update surroundings
                     count = recursive_update([row,col])
                     counter += count
-        print(counter)
+            ts+=1
+            if energy_grid == [[0 for i in range(0,len(energy_grid))] for j in range(0,len(energy_grid))]:
+                break
+        print(ts)
+
             
 
 if __name__ == "__main__":
