@@ -17,10 +17,10 @@ def main():
     Stop at the first incorrect closing character on each corrupted line
     """
     point_lookup = {
-        ')' : 3,
-        ']' : 57,
-        '}' : 1197,
-        '>' : 25137
+        ')' : 1,
+        ']' : 2,
+        '}' : 3,
+        '>' : 4,
     }
     close_lookup  = {
         ')' : '(',
@@ -28,7 +28,14 @@ def main():
         '}' : '{',
         '>' : '<'
     }
+    start_lookup  = {
+        '(' : ')',
+        '[' : ']',
+        '{' : '}',
+        '<' : '>'
+    }
     total_sum = 0
+    sum_list = []
     fname = sys.argv[1]
     with open(fname,'r') as f:
         # Split lines, convert into 2D array
@@ -42,8 +49,9 @@ def main():
                 elif char in ')]}>':
                     match_char = start_char.pop()
                     if match_char != close_lookup[char]:
-                        print("{0}:{1} Un-matched character {2}".format(id,cid,char))
-                        total_sum += point_lookup[char]
+                        # print("{0}:{1} Un-matched character {2}".format(id,cid,char))
+                        # total_sum += point_lookup[char]
+                        start_char = []
                         break
                     else:
                         # if it does match, put it back
@@ -51,8 +59,14 @@ def main():
                 else:
                     print("Invalid Character: {0}".format(char))
                     return
-        print(total_sum)
-                
+            if start_char != []:
+                for char in start_char[::-1]:
+                    total_sum*= 5
+                    total_sum+= point_lookup[start_lookup[char]]
+                sum_list.append(total_sum)
+                total_sum = 0
+    sum_list.sort()
+    print(sum_list[len(sum_list) // 2])
 
 if __name__ == "__main__":
     main()
