@@ -17,3 +17,15 @@ cargo aoc credentials -s {token}
 cargo new <package_name>
 cargo add aoc-runner aoc-runner-derive
 ```
+
+## Using the aoc-crate
+First thing we want to download the input
+```
+# If no additional arguments are provided it will default to the current date
+cargo aoc input -d {day} -y {year}
+```
+
+To test the solution for a given day run
+```
+cargo aoc
+```
