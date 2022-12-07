@@ -1,14 +1,35 @@
-// Define types
-// type Gift = (u32, u32, u32);
+use std::num::ParseIntError;
 
 // Generator to transform the string to a usable datatype
-// #[aoc_generator(day1)]
-// pub fn input_generator(input: &[str]) -> Vec<Gift> {
-// }
+#[aoc_generator(day1)]
+pub fn input_generator(input: &str) -> Result<Vec<u32>, ParseIntError> {
+    input
+        .split("\n\n")
+        .map(|l| {
+            l.split('\n').map(|s| {
+                s.parse::<u32>()
+            }).sum()
+        }).collect()
+}
 
-// #[aoc(day1, part1)]
-// pub fn solve_part1(input: &[Gift]) -> u32 {
-// }
+#[aoc(day1, part1)]
+pub fn solve_part1(input: &[u32]) -> u32 {
+    *input
+        .iter().max().unwrap()
+}
+
+#[aoc(day1, part2)]
+pub fn solve_part2(input: &Vec<u32>) -> u32 {
+    use std::collections::BinaryHeap;
+    let mut heap = input.iter().copied().collect::<BinaryHeap<u32>>();
+    let mut v = Vec::new();
+    for _ in 0..3 {
+        if let Some(p) = heap.pop() {
+            v.push(p);
+        }
+    }
+    return v.iter().sum();
+}
 
 
 // #[cfg(test)]
