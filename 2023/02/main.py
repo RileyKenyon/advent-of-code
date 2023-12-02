@@ -24,19 +24,23 @@ def main():
                 for color in colors:
                     if color.endswith('green'):
                         value = int(color.strip('green '))
-                        max_exceeded |= value > green_max
+                        greens.append(value)
+                        # max_exceeded |= value > green_max
                     elif color.endswith('red'):
                         value = int(color.strip('red '))
-                        max_exceeded |= value > red_max
+                        reds.append(value)
+                        # max_exceeded |= value > red_max
                     else:
                         # blue
                         value = int(color.strip('blue '))
-                        max_exceeded |= value > blue_max
+                        blues.append(value)
+                        # max_exceeded |= value > blue_max
+            power = max(greens) * max(reds) * max(blues)
             # parse rbg from draws
             # check is any values exceed the max
             # if not add the id to the sum
             if not max_exceeded:
-              sum+=id
+              sum+=power
         print(sum)
         
             
