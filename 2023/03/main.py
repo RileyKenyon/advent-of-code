@@ -16,8 +16,9 @@ def main():
         print("Width:", width)
 
         matches = re.finditer('([^\d.\n])', lines)
-        values = []
+        total = 0
         for m in matches:
+            values = []
             idx = m.start()
             print("Index match", idx, ": ", lines[m.start()])
             # Check forward / backward
@@ -52,7 +53,6 @@ def main():
 
             # check upper row:
             rng = range(idx - 1 - width, idx + 1 - width + 1)
-            # any([lines[index].isdigit() for index in rng])
             recent_values = []
             for index in rng:
                 # There is at least one match
@@ -94,11 +94,13 @@ def main():
                     recent_values.append(value)
                     print(start,end,value)
 
-
             for value in recent_values:
               values.append(value)
+
+            if (len(values) == 2):
+              total += (values[0] * values[1])
             
-        print(sum(values))
+        print(total)
                 
         
             
