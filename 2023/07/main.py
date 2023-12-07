@@ -7,6 +7,7 @@ from functools import cmp_to_key
 Hand = namedtuple('Hand',['cards', 'bid']) #, strength, rank
 
 card_strength = {
+    'J': 1,
     '2': 2,
     '3': 3,
     '4': 4,
@@ -16,10 +17,9 @@ card_strength = {
     '8': 8,
     '9': 9,
     'T': 10,
-    'J': 11,
-    'Q': 12,
-    'K': 13,
-    'A': 14
+    'Q': 11,
+    'K': 12,
+    'A': 13
 }
 
 def get_strength(x: Hand):
@@ -28,6 +28,13 @@ def get_strength(x: Hand):
     strength = 0
     for card in set(x.cards):
         count[card] = x.cards.count(card)
+
+    # See if J is present
+    if 'J' in count.keys() and len(count) != 1:
+        jokers = count.pop('J')
+        max_key = max(count, key=count.get)
+        count[max_key] += jokers
+
     if len(count) == 1:
         strength = 6
     elif len(count) == 2:
@@ -59,9 +66,7 @@ def get_strength(x: Hand):
 def card_comparison(x :Hand, y:Hand):
     # compare type
     sx = get_strength(x)
-    print("sx", sx)
     sy = get_strength(y)
-    print("sy", sy)
     # if equal - compare first card in each hand, and continue until one wins
     if (sx == sy):
         for p in zip(x.cards, y.cards):
@@ -88,6 +93,7 @@ def main():
         for rank, hand in enumerate(hands):
             winnings+= hand.bid * (rank + 1)
         print(winnings)
+        # not correct: 250377063
 
         
 if __name__ == "__main__":
