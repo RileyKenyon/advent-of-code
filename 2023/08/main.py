@@ -22,15 +22,16 @@ def main():
                 network[key.strip()] = values
         print(network)
 
+        # Get keys that end in A
+        search_keys = list(filter(lambda x: x.endswith('A'), network.keys()))
+
         # do sequence until reaching 'ZZZ'
-        search = 'AAA'
         count = 0
-        while search != 'ZZZ':
+        while not all([search.endswith('Z') for search in search_keys]):
             for lookup in sequence: 
                 count+=1
-                search = network[search][0 if lookup == 'L' else 1]
-                if search == 'ZZZ':
-                    break
+                for id, search in enumerate(search_keys):
+                    search_keys[id] = network[search][0 if lookup == 'L' else 1]
         print(count)
 
 
