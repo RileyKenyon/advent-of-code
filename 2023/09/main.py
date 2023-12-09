@@ -29,6 +29,7 @@ def main():
         print(lines)
         out = 0
         for line in lines:
+            line.reverse()
             save = []
             while not all([l == 0 for l in line]):
                 save.append(line[-1])
