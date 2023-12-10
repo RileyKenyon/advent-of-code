@@ -14,18 +14,20 @@ compatible = {
     'L' : [[], ['J', 'X', '-'], ['|', 'F', 'X'], []],
     '|' : [[], [], ['F', 'X','|'], ['J', 'L', '|']],
     '-' : [['F', 'L','-'], ['J', 'X', '-'], [], []],
-    'S' : [['F', 'L', '-'],['J', 'X', '-'], ['F','X','|'],['J','L','|']]
+    'S' : [['F', 'L', '-'],['J', 'X', '-'], ['F','X','|'],['J','L','|']],
+    '.' : [[],[],[],[]]
 }
 
 def get_neighbors(map, start, width):
     n = []
+    value = compatible[map[start] if not map[start].isdigit() else '.']
     checks = [start - 1, start + 1, start - width, start + width]
-    for idx in checks:
+    for id, idx in enumerate(checks):
         if idx >= 0 and idx < len(map):
             # valid index
-            n.append(map[idx] if map[idx] != '\n' else [])
+            n.append(idx if (map[idx] != '\n' and map[idx] in value[id]) else None)
         else:
-            n.append([])
+            n.append(None)
     return n
 
 def update_map(map, start, width, value):
@@ -52,21 +54,29 @@ def main():
         start = re.search('S', pipe).start()
         # determine starting pipe type
         pipe = list(pipe)
-        neighbors = get_neighbors(pipe, start, width)
-        maps = []
-        for idx, [p, comp] in enumerate(zip(neighbors, compatible[pipe[start]])):
-            if p != [] and p in comp:
-                pipe[start] = '0'
-                checks = [start - 1, start + 1, start - width, start + width]
-                # print("Start: ", pipe[checks[idx]])
-                m = update_map(pipe, checks[idx], width, '1')
-                # print(m)
-                maps.append(m)
-        out = []
+        next_match = get_neighbors(pipe, start, width)
+        print(next_match)
+        pipe[start] = '0'
+        total =  1
+        while not all([match is None for match in next_match]) :
+            tmp = []
+            print(next_match)
+            for match in next_match:
+                if match is not None:
+                    print(match)
+                    neighbors = get_neighbors(pipe, match, width)
+                    pipe[match] = str(total)
+                    for n in neighbors: 
+                        tmp.append(n)
+            next_match = tmp
+            print(next_match)
+            total+=1
+        print(pipe)
+        out = 0
         for i in range(0, len(pipe)):
-            # print([map[i] for map in maps])
-            out.append(min([int(map[i]) if map[i].isdigit() else 0 for map in maps]))
-        print(max(out))
+            if pipe[i].isdigit() and int(pipe[i]) > out:
+                out = int(pipe[i]) 
+        print(out)
 
 
 
