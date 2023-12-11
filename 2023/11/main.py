@@ -25,28 +25,45 @@ def expand_array(l):
             offset+=1
     return out
 
-
+multiplier = 1000000 - 1
 def main():
     fname = sys.argv[1]
     with open(fname,'r') as f:
         lines = f.read().splitlines()
-        lines = [list(line) for line in lines]
-        lines = expand_array(lines)
-        joint = [''.join(line) for line in lines]
-        # print(joint)
         coord = []
-        for idx, line in enumerate(joint):
-            col = line.find('#')
+        empty_col = [True] * len(lines[0])
+        empty_row = [True] * len(lines)
+        for idx, line in enumerate(lines):
             for col in [i for i,val in enumerate(line) if val == '#']:
                 # Galaxy here - add coordinate
                 coord.append([idx, col])
+                empty_row[idx] = False
+                empty_col[col] = False 
+            
         # iterate through combinations of coordinates
         d = 0
         c = combinations(coord, 2)
         for pair in c:
             # Get distance - add to the sum
-            dist = abs(pair[0][0] - pair[1][0]) + abs(pair[0][1] - pair[1][1])
-            d+= dist
+            x1 = pair[0][0]
+            y1 = pair[0][1]
+
+            x2 = pair[1][0]
+            y2 = pair[1][1]
+
+            if x2 < x1:
+                tmp = copy.deepcopy(x1)
+                x1 = x2
+                x2 = tmp
+            if y2 < y1:
+                tmp = copy.deepcopy(y1)
+                y1 = y2
+                y2 = tmp      
+            extra = 0
+            extra += empty_row[x1:x2].count(True) * multiplier
+            extra += empty_col[y1:y2].count(True) * multiplier
+            dist = abs(x1 - x2) + abs(y1 - y2)
+            d+= dist + extra
         print(d)
 if __name__ == "__main__":
     main()
